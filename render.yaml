@@ -1,13 +1,10 @@
-# Render Configuration File
-# यह file Render पर auto deployment को simplify करता है
-
 services:
   - type: web
     name: visit-vagad-server
-    env: node
+    runtime: node
     plan: free
     rootDir: server
-    buildCommand: npm install && npm run build
+    buildCommand: npm install --legacy-peer-deps && npm run build
     startCommand: npm start
     envVars:
       - key: MONGO_URI
@@ -28,5 +25,9 @@ services:
         scope: all
       - key: CORS_ORIGIN
         scope: all
+      - key: PORT
+        value: 5000
+      - key: NODE_ENV
+        value: production
       - key: PORT
         value: 5000

@@ -1,5 +1,5 @@
 import mongoose, { Schema, model, Document, Model } from "mongoose";
-import { IPlace } from "../types/index.ts";
+import { IPlace } from "../types";
 
 
 const placeSchema = new Schema<IPlace>({

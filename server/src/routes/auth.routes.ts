@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { getMe, getAllUsers, updateUserRole } from "../controllers/auth.controller.ts"
-import { protect, authorize } from "../middlewares/auth.middleware.ts";
-import { validate, updateRoleSchema } from "../middlewares/validation.middleware.ts";
+import { getMe, getAllUsers, updateUserRole } from "../controllers/auth.controller"
+import { protect, authorize } from "../middlewares/auth.middleware";
+import { validate, updateRoleSchema } from "../middlewares/validation.middleware";
 
 const router = Router()
 

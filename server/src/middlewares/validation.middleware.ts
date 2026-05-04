@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { Request, Response, NextFunction } from "express";
-import { ApiError } from "../utils/index.ts";
+import { ApiError } from "../utils";
 
 export const validate = (schema: z.ZodObject<any, any>) => {
   return (req: Request, res: Response, next: NextFunction) => {
@@ -9,7 +9,7 @@ export const validate = (schema: z.ZodObject<any, any>) => {
       next();
     } catch (error) {
       if (error instanceof z.ZodError) {
-        const errorMessages = error.errors.map((err) => `${err.path.join(".")}: ${err.message}`);
+        const errorMessages = error.issues.map((err: z.ZodIssue) => `${err.path.join(".")}: ${err.message}`);
         return res.status(400).json({
           success: false,
           message: "Validation Error",

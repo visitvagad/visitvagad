@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
-import { placesData } from "./placesData.ts";
-import Place from "../models/place.models.ts";
-import { config } from "../config/config.ts";
+import { placesData } from "./placesData";
+import Place from "../models/place.models";
+import { config } from "../config/config";
 import dns from "dns"
 dns.setServers(["8.8.8.8", "4.4.8.8"])
 

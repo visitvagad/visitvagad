@@ -64,7 +64,7 @@ export const protect = asyncHandler(
 
             // Step 4: Attach user to request
             req.user = {
-                id: (user._id as string).toString(),
+                id: (user._id as unknown as string).toString(),
                 role: user.role
             }
 

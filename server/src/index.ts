@@ -2,12 +2,12 @@ import express, { Request, Response, NextFunction } from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 import { rateLimit } from 'express-rate-limit';
-import { config } from './config/config.ts';
-import connectDB from './db/connectDatabase.ts';
+import { config } from './config/config';
+import connectDB from './db/connectDatabase';
 import authRouter from "./routes/auth.routes"
-import placeRouter from "./routes/place.routes.ts"
+import placeRouter from "./routes/place.routes"
 import imageRouter from "./routes/image.routes"
-import { ApiError } from './utils/index.ts'
+import { ApiError } from './utils'
 
 
 const app = express();

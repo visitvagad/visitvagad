@@ -1,5 +1,5 @@
 import mongoose, { Schema, Model } from "mongoose";
-import { IDay, IItinerary } from "../types/index.ts";
+import { IDay, IItinerary } from "../types";
 /* ---------------- Day Schema ---------------- */
 
 const daySchema = new Schema({
