@@ -1,0 +1,32 @@
+# Render Configuration File
+# यह file Render पर auto deployment को simplify करता है
+
+services:
+  - type: web
+    name: visit-vagad-server
+    env: node
+    plan: free
+    rootDir: server
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: MONGO_URI
+        scope: all
+      - key: JWT_SECRET
+        scope: all
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: CLERK_PUBLISHABLE_KEY
+        scope: all
+      - key: CLERK_SECRET_KEY
+        scope: all
+      - key: IMAGEKIT_PUBLIC_KEY
+        scope: all
+      - key: IMAGEKIT_PRIVATE_KEY
+        scope: all
+      - key: IMAGEKIT_URL_ENDPOINT
+        scope: all
+      - key: CORS_ORIGIN
+        scope: all
+      - key: PORT
+        value: 5000
