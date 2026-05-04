@@ -8,9 +8,13 @@ interface AuthContextType {
   role: string | null;
   isLoading: boolean;
   refreshUser: () => Promise<void>;
+  login?: (email: string, password: string) => Promise<void>;
+  register?: (name: string, email: string, password: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export { AuthContext };
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isSignedIn, isLoaded: clerkLoaded } = useAuth();

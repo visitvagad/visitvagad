@@ -1,11 +1,10 @@
 import { useUser } from "@clerk/clerk-react"
 import { useState, useEffect } from "react"
-import api from "../apis/axiosInstance"
 import Loader from "../components/common/Loader"
 
 const DashboardPage = () => {
   const { user } = useUser()
-  const [itineraries, setItineraries] = useState([])
+  const [itineraries] = useState([])
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {

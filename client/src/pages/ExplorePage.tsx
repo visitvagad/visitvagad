@@ -10,14 +10,14 @@ const ExplorePage = () => {
   const [filter, setFilter] = useState({ district: "", category: "" })
   const [pagination, setPagination] = useState({ page: 1, pages: 1, total: 0 })
 
-  const fetchPlaces = async (page = 1) => {
+  const fetchPlaces = async (pageNum: number = 1) => {
     setIsLoading(true)
     try {
       const res = await getAllPlacesApi(filter.district, filter.category, undefined, undefined)
       const data = res?.data?.data
       setPlaces(data?.places || [])
       setPagination({
-        page: data?.page || 1,
+        page: data?.page || pageNum,
         pages: data?.pages || 1,
         total: data?.total || 0
       })

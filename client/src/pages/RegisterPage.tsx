@@ -1,13 +1,19 @@
 import { useState, useContext } from "react"
 import { AuthContext } from "../context/AuthContext"
 import { useNavigate, Link } from "react-router-dom"
-import type { IUser } from "../types"
 
 function RegisterPage() {
   const authContext = useContext(AuthContext)
   const navigate = useNavigate()
 
-  const [formData, setFormData] = useState<IUser & { confirmPassword?: string }>({
+  const [formData, setFormData] = useState<{
+    id?: string;
+    name: string;
+    email: string;
+    role?: "user" | "editor" | "admin";
+    password: string;
+    confirmPassword?: string;
+  }>({
     name: "",
     email: "",
     password: "",
