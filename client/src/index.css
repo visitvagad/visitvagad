@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #9a4601;
+  --color-primary-container: #e07b39;
+  --color-secondary: #2c694e;
+  --color-surface: #fff8f0;
+  --color-surface-container-low: #faf3e9;
+  --color-surface-container: #f4ede3;
+  --color-surface-container-lowest: #ffffff;
+  --color-on-surface: #1e1b16;
+
+  --font-epilogue: "Epilogue", sans-serif;
+  --font-plus-jakarta: "Plus Jakarta Sans", sans-serif;
+}
+
+body {
+  @apply bg-surface text-on-surface font-plus-jakarta;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  @apply font-epilogue;
+}

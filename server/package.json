@@ -1,0 +1,48 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "Visit Vagad an Tourist Website & Travel Planner",
+  "keywords": [
+    "visit-vagad"
+  ],
+  "homepage": "https://github.com/chiragbhoi01/visit-vagad",
+  "bugs": {
+    "url": "https://github.com/chiragbhoi01/visit-vagad"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chiragbhoi01/visit-vagad"
+  },
+  "license": "ISC",
+  "author": "Chirag Bhoi",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "seed": "tsx src/script/seed.ts"
+  },
+  "dependencies": {
+    "@clerk/clerk-sdk-node": "^4.13.23",
+    "@imagekit/nodejs": "^7.5.0",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.4.1",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^9.3.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^22.0.0",
+    "tsx": "^4.17.0",
+    "typescript": "^5.9.3"
+  }
+}
