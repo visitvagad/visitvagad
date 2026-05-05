@@ -18,7 +18,7 @@
 
 1. **GitHub Account** - Code को push करें
 2. **MongoDB Atlas** - Free cluster बनाएं
-3. **Clerk Account** - Authentication के लिए
+3. **JWT Secret** - Authentication के लिए
 4. **ImageKit Account** - Image uploads के लिए
 5. **Render Account** - Backend deploy करने के लिए
 6. **Vercel Account** - Frontend deploy करने के लिए
@@ -69,8 +69,6 @@ PORT=5000
 MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/visitvagad
 JWT_SECRET=your_super_secret_jwt_key_minimum_32_characters_long
 JWT_EXPIRES_IN=7d
-CLERK_PUBLISHABLE_KEY=pk_live_your_key
-CLERK_SECRET_KEY=sk_live_your_secret
 IMAGEKIT_PUBLIC_KEY=your_public_key
 IMAGEKIT_PRIVATE_KEY=your_private_key
 IMAGEKIT_URL_ENDPOINT=https://ik.imagekit.io/your_id
@@ -79,7 +77,6 @@ CORS_ORIGIN=https://your-vercel-domain.vercel.app
 
 ### Client के लिए (.env.local)
 ```env
-VITE_CLERK_PUBLISHABLE_KEY=pk_live_your_key
 VITE_API_URL=https://your-backend.onrender.com
 ```
 
@@ -106,8 +103,6 @@ Render में Environment tab में ये variables जोड़ें:
 MONGO_URI = mongodb+srv://username:password@cluster.mongodb.net/visitvagad
 JWT_SECRET = your_jwt_secret_key
 JWT_EXPIRES_IN = 7d
-CLERK_PUBLISHABLE_KEY = pk_live_...
-CLERK_SECRET_KEY = sk_live_...
 IMAGEKIT_PUBLIC_KEY = ...
 IMAGEKIT_PRIVATE_KEY = ...
 IMAGEKIT_URL_ENDPOINT = https://ik.imagekit.io/...
@@ -141,7 +136,6 @@ Install Command: npm install
 Vercel Project Settings → Environment Variables में:
 
 ```
-VITE_CLERK_PUBLISHABLE_KEY = pk_live_...
 VITE_API_URL = https://your-backend-name.onrender.com
 ```
 
@@ -225,7 +219,7 @@ Build failed
 - [Render Docs](https://render.com/docs)
 - [Vercel Docs](https://vercel.com/docs)
 - [MongoDB Atlas Guide](https://docs.atlas.mongodb.com)
-- [Clerk Documentation](https://clerk.com/docs)
+- [JWT.io](https://jwt.io)
 
 ---
 
@@ -233,7 +227,7 @@ Build failed
 
 - [ ] GitHub repository ready है
 - [ ] MongoDB Atlas cluster बना दी है
-- [ ] Clerk keys प्राप्त कर लिए हैं
+- [ ] JWT secret configure कर लिया है
 - [ ] ImageKit account setup है
 - [ ] .env.example files फिर से check किए हैं
 - [ ] Backend Render पर deploy हो गया है

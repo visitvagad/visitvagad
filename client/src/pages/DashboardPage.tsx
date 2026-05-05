@@ -1,9 +1,9 @@
-import { useUser } from "@clerk/clerk-react"
 import { useState, useEffect } from "react"
 import Loader from "../components/common/Loader"
+import { useAppAuth } from "../context/AuthContext"
 
 const DashboardPage = () => {
-  const { user } = useUser()
+  const { user } = useAppAuth()
   const [itineraries] = useState([])
   const [isLoading, setIsLoading] = useState(true)
 
@@ -20,7 +20,7 @@ const DashboardPage = () => {
       <div className="max-w-7xl mx-auto">
         <header className="mb-12">
           <span className="text-primary text-sm font-bold tracking-[0.2em] uppercase mb-2 block">
-            Welcome back, {user?.firstName || 'Traveler'}
+            Welcome back, {user?.name || 'Traveler'}
           </span>
           <h1 className="text-5xl font-epilogue font-bold text-on-surface">
             Your Personal Chronicles

@@ -13,10 +13,6 @@ services:
         scope: all
       - key: JWT_EXPIRES_IN
         value: 7d
-      - key: CLERK_PUBLISHABLE_KEY
-        scope: all
-      - key: CLERK_SECRET_KEY
-        scope: all
       - key: IMAGEKIT_PUBLIC_KEY
         scope: all
       - key: IMAGEKIT_PRIVATE_KEY

@@ -1,8 +1,9 @@
 import { Request, Response, NextFunction } from "express"
-import { clerkClient } from "@clerk/clerk-sdk-node"
+import jwt from "jsonwebtoken"
 
 import { asyncHandler, ApiError } from "../utils"
 import { User } from "../models/user.models"
+import { config } from "../config/config"
 
 
 /* ---------- EXTEND EXPRESS REQUEST ---------- */
@@ -33,36 +34,19 @@ export const protect = asyncHandler(
         }
 
         try {
-            // Step 1: Verify token with Clerk
-            const decodedToken = await clerkClient.verifyToken(token)
-            const clerkId = decodedToken.sub
+            const decoded = jwt.verify(token, config.jwtSecret) as { id?: string }
 
-            // Step 2: Find user in MongoDB by clerkId
-            let user = await User.findOne({ clerkId })
-
-            // Step 3: Lazy Sync if user not found
-            if (!user) {
-                const clerkUser = await clerkClient.users.getUser(clerkId)
-                const email = clerkUser.emailAddresses[0]?.emailAddress
-                const name = `${clerkUser.firstName || ""} ${clerkUser.lastName || ""}`.trim() || "User"
-
-                // Check if user exists by email (link legacy accounts)
-                user = await User.findOne({ email })
-
-                if (user) {
-                    user.clerkId = clerkId
-                    await user.save()
-                } else {
-                    user = await User.create({
-                        clerkId,
-                        email,
-                        name,
-                        role: "user"
-                    })
-                }
+            if (!decoded?.id) {
+                throw new ApiError(401, "Invalid token payload")
             }
 
-            // Step 4: Attach user to request
+            const user = await User.findById(decoded.id)
+
+            if (!user || !user.isActive) {
+                throw new ApiError(401, "User account has been deactivated")
+            }
+
+            // Attach user details to request for downstream authorization
             req.user = {
                 id: (user._id as unknown as string).toString(),
                 role: user.role
@@ -70,7 +54,7 @@ export const protect = asyncHandler(
 
             next()
         } catch (error) {
-            console.error("Clerk verification error:", error)
+            console.error("Token verification error:", error)
             throw new ApiError(401, "Invalid or expired token")
         }
     }

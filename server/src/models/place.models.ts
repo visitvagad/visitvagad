@@ -53,7 +53,10 @@ const placeSchema = new Schema<IPlace>({
             min: -180,
             max: 180
         }
-    }
+    },
+    status: { type: String, enum: ["draft", "pending_review", "published"], default: "draft" },
+  createdBy: { type: String, required: true },
+  updatedBy: { type: String }
 }, { timestamps: true });
 
 // Compound unique index: same place name can exist in different districts

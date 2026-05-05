@@ -7,9 +7,9 @@ import type { Request as ExpressRequest } from "express";
 export interface IUser extends Document {
     name: string;
     email: string;
-    clerkId?: string;
     password?: string;
     role: "user" | "editor" | "admin";
+    isActive: boolean;
 }
 /* ---------------- IPlace Schema Types ---------------- */
 
@@ -22,6 +22,9 @@ export interface IPlace extends Document {
     featured: boolean;
     trending: boolean;
     bestSeason?: "Summer" | "Monsoon" | "Winter";
+    status?: "draft" | "pending_review" | "published";
+    createdBy?: string;
+    updatedBy?: string;
     coordinates: {
         latitude: number;
         longitude: number;

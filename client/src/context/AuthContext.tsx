@@ -1,15 +1,17 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
-import { useAuth, useUser } from "@clerk/clerk-react";
-import api from "../apis/axiosInstance";
+import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { loginApi, registerApi, getMeApi } from "../apis/auth.api";
+import { initializeAuthToken, persistAuthToken } from "../apis/axiosInstance";
 import type { IUser } from "../types";
 
 interface AuthContextType {
   user: IUser | null;
   role: string | null;
   isLoading: boolean;
+  isSignedIn: boolean;
   refreshUser: () => Promise<void>;
-  login?: (email: string, password: string) => Promise<void>;
-  register?: (name: string, email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
+  register: (name: string, email: string, password: string) => Promise<void>;
+  logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -17,59 +19,93 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export { AuthContext };
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isSignedIn, isLoaded: clerkLoaded } = useAuth();
-  const { user: clerkUser } = useUser();
   const [user, setUser] = useState<IUser | null>(null);
   const [role, setRole] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSignedIn, setIsSignedIn] = useState(false);
+
+  const applyUserState = (nextUser: IUser | null) => {
+    setUser(nextUser);
+    setRole(nextUser?.role || null);
+    setIsSignedIn(Boolean(nextUser));
+  };
 
   const fetchUser = async () => {
-    if (isSignedIn) {
-      try {
-        const res = await api.get("/auth/me");
-        const userData = res?.data?.data;
-        if (userData) {
-          setUser(userData);
-          setRole(userData.role || "user");
-        } else {
-          setUser(null);
-          setRole(null);
-        }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-        setUser(null);
-        setRole(null);
-      } finally {
-        setIsLoading(false);
-      }
-    } else {
-      setUser(null);
-      setRole(null);
-      setIsLoading(false);
+    try {
+      const res = await getMeApi();
+      const userData = res?.data?.data as IUser | undefined;
+      applyUserState(userData || null);
+    } catch {
+      persistAuthToken(null);
+      applyUserState(null);
     }
   };
 
   useEffect(() => {
-    if (clerkLoaded) {
-      fetchUser();
-    }
-  }, [isSignedIn, clerkLoaded, clerkUser]);
+    const boot = async () => {
+      const token = initializeAuthToken();
+      if (!token) {
+        applyUserState(null);
+        setIsLoading(false);
+        return;
+      }
+
+      await fetchUser();
+      setIsLoading(false);
+    };
+
+    boot();
+  }, []);
 
   const refreshUser = async () => {
     setIsLoading(true);
     await fetchUser();
+    setIsLoading(false);
   };
 
-  return (
-    <AuthContext.Provider value={{ user, role, isLoading, refreshUser }}>
-      {children}
-    </AuthContext.Provider>
+  const login = async (email: string, password: string) => {
+    const res = await loginApi({ email, password });
+    const token = res?.data?.data?.token as string;
+    const userData = res?.data?.data?.user as IUser;
+
+    persistAuthToken(token);
+    applyUserState(userData);
+  };
+
+  const register = async (name: string, email: string, password: string) => {
+    const res = await registerApi({ name, email, password });
+    const token = res?.data?.data?.token as string;
+    const userData = res?.data?.data?.user as IUser;
+
+    persistAuthToken(token);
+    applyUserState(userData);
+  };
+
+  const logout = () => {
+    persistAuthToken(null);
+    applyUserState(null);
+  };
+
+  const value = useMemo(
+    () => ({
+      user,
+      role,
+      isLoading,
+      isSignedIn,
+      refreshUser,
+      login,
+      register,
+      logout,
+    }),
+    [user, role, isLoading, isSignedIn]
   );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAppAuth = () => {
   const context = useContext(AuthContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error("useAppAuth must be used within an AuthProvider");
   }
   return context;

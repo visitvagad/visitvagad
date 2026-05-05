@@ -1,5 +1,4 @@
 import { Navigate } from "react-router-dom"
-import { useAuth } from "@clerk/clerk-react"
 import { useAppAuth } from "../context/AuthContext"
 
 interface RoleRouteProps {
@@ -8,10 +7,9 @@ interface RoleRouteProps {
 }
 
 const RoleRoute = ({ children, allowedRoles }: RoleRouteProps) => {
-  const { isLoaded, isSignedIn } = useAuth()
-  const { role, isLoading: authLoading } = useAppAuth()
+  const { role, isLoading, isSignedIn } = useAppAuth()
 
-  if (!isLoaded || authLoading) {
+  if (isLoading) {
     return (
       <div className="h-screen flex items-center justify-center bg-surface">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>

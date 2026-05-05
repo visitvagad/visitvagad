@@ -5,7 +5,7 @@ VisitVagad is a premium tourism web application dedicated to showcasing the sun-
 ## 🌟 Features
 
 - **Editorial UI:** High-end magazine feel with intentional asymmetry and tonal depth.
-- **Authentication:** Secure user management powered by Clerk.
+- **Authentication:** Secure user management powered by JWT authentication.
 - **RBAC System:** Distinct roles for Admin, Editor, and User.
 - **Curated Exploration:** Filterable grid of historical and natural sites.
 - **Admin Panel:** Comprehensive tools for managing places and user roles.
@@ -13,8 +13,8 @@ VisitVagad is a premium tourism web application dedicated to showcasing the sun-
 
 ## 🛠️ Tech Stack
 
-- **Frontend:** React (Vite), Tailwind CSS (v4), Clerk SDK.
-- **Backend:** Node.js, Express, MongoDB (Mongoose), Clerk Node SDK.
+- **Frontend:** React (Vite), Tailwind CSS (v4), Axios.
+- **Backend:** Node.js, Express, MongoDB (Mongoose), JWT.
 - **Images:** ImageKit.io.
 
 ## 🚀 Quick Start
@@ -22,7 +22,6 @@ VisitVagad is a premium tourism web application dedicated to showcasing the sun-
 ### 1. Prerequisites
 - Node.js (v18+)
 - MongoDB Atlas account
-- Clerk account
 - ImageKit account
 
 ### 2. Environment Setup

@@ -1,6 +1,5 @@
-import mongoose, { Schema, Document, Model } from "mongoose";
+import mongoose, { Schema, Model } from "mongoose";
 import { IUser } from "../types";
-import bcrypt from "bcryptjs";
 
 const userSchema = new Schema<IUser>({
     name: {
@@ -15,11 +14,6 @@ const userSchema = new Schema<IUser>({
         lowercase: true,
         match: [/^\S+@\S+\.\S+$/, "Please use a valid email"]
     },
-    clerkId: {
-        type: String,
-        unique: true,
-        sparse: true
-    },
     password: {
         type: String,
         required: false,
@@ -29,6 +23,10 @@ const userSchema = new Schema<IUser>({
         type: String,
         enum: ["user", "editor", "admin"],
         default: "user"
+    },
+    isActive: {
+        type: Boolean,
+        default: true
     }
 }, {
     timestamps: true

@@ -7,6 +7,10 @@ import connectDB from './db/connectDatabase';
 import authRouter from "./routes/auth.routes"
 import placeRouter from "./routes/place.routes"
 import imageRouter from "./routes/image.routes"
+import hotelRouter from "./routes/hotel.routes"
+import eventRouter from "./routes/event.routes"
+import foodRouter from "./routes/food.routes"
+import itineraryRouter from "./routes/itinerary.routes"
 import { ApiError } from './utils'
 
 
@@ -41,6 +45,10 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use("/api/auth", authRouter)
 app.use("/api/places", placeRouter)
 app.use("/api/images", imageRouter)
+app.use("/api/hotels", hotelRouter)
+app.use("/api/events", eventRouter)
+app.use("/api/food", foodRouter)
+app.use("/api/itineraries", itineraryRouter)
 
 /* ---------- 404 HANDLER ---------- */
 app.use((req: Request, res: Response) => {

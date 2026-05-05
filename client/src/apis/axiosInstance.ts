@@ -1,5 +1,7 @@
 import axios from "axios"
 
+export const AUTH_TOKEN_KEY = "auth_token"
+
 const api = axios.create({
     baseURL: `${import.meta.env.VITE_API_URL}/api`,
     headers: {
@@ -15,6 +17,21 @@ export const setAuthToken = (token: string | null) => {
     }
 }
 
+export const persistAuthToken = (token: string | null) => {
+    if (token) {
+        localStorage.setItem(AUTH_TOKEN_KEY, token)
+    } else {
+        localStorage.removeItem(AUTH_TOKEN_KEY)
+    }
+    setAuthToken(token)
+}
+
+export const initializeAuthToken = () => {
+    const token = localStorage.getItem(AUTH_TOKEN_KEY)
+    setAuthToken(token)
+    return token
+}
+
 /* ---------- RESPONSE INTERCEPTOR ---------- */
 
 api.interceptors.response.use(
@@ -23,7 +40,7 @@ api.interceptors.response.use(
     },
     (error) => {
         if (error.response && error.response.status === 401) {
-            // Unauthorized - could trigger a sign out or refresh here
+            persistAuthToken(null)
         }
         return Promise.reject(error)
     }

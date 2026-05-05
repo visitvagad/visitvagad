@@ -2,12 +2,13 @@ import { asyncHandler, ApiError, ApiResponse } from "../utils"
 import { Request, Response } from "express"
 import Place from "../models/place.models"
 import { User } from "../models/user.models"
+import { AuthRequest } from "../types"
 
 /* ---------- getAllPlaces ---------- */
 
 export const getAllPlaces = asyncHandler(async (req: Request, res: Response) => {
 
-    const { district, category, featured, trending, page = 1, limit = 10 } = req.query
+    const { district, category, featured, trending, status, createdBy, page = 1, limit = 10 } = req.query
 
     // dynamic filter
     const filter: any = {}
@@ -16,6 +17,8 @@ export const getAllPlaces = asyncHandler(async (req: Request, res: Response) => 
     if (category) filter.category = category
     if (featured !== undefined) filter.featured = featured === 'true'
     if (trending !== undefined) filter.trending = trending === 'true'
+    if (status) filter.status = status
+    if (createdBy) filter.createdBy = createdBy
 
     const skip = (Number(page) - 1) * Number(limit)
 
@@ -56,20 +59,45 @@ export const getPlaceById = asyncHandler(async (req: Request, res: Response) => 
     )
 })
 
-/* ---------- createPlace (Admin Only) ---------- */
+/* ---------- createPlace ---------- */
 
-export const createPlace = asyncHandler(async (req: Request, res: Response) => {
-    const place = await Place.create(req.body)
+export const createPlace = asyncHandler(async (req: AuthRequest, res: Response) => {
+    const role = req.user?.role
+    const status = role === "admin" ? "published" : "pending_review"
+    
+    const place = await Place.create({
+        ...req.body,
+        status,
+        createdBy: req.user?.id
+    })
+
     res.status(201).json(
         new ApiResponse(201, place, "Place created successfully")
     )
 })
 
-/* ---------- updatePlace (Admin Only) ---------- */
+/* ---------- updatePlace ---------- */
 
-export const updatePlace = asyncHandler(async (req: Request, res: Response) => {
+export const updatePlace = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { id } = req.params
-    const place = await Place.findByIdAndUpdate(id, req.body, {
+    const role = req.user?.role
+    
+    // Only admins can change status directly to published
+    if (req.body.status === "published" && role !== "admin") {
+        throw new ApiError(403, "Only admins can publish content")
+    }
+
+    const updateData = { 
+        ...req.body, 
+        updatedBy: req.user?.id 
+    }
+    
+    // If editor updates, move back to pending review unless it's just a draft save
+    if (role === "editor" && req.body.status !== "draft") {
+        updateData.status = "pending_review"
+    }
+
+    const place = await Place.findByIdAndUpdate(id, updateData, {
         new: true,
         runValidators: true
     })
@@ -83,10 +111,16 @@ export const updatePlace = asyncHandler(async (req: Request, res: Response) => {
     )
 })
 
-/* ---------- deletePlace (Admin Only) ---------- */
+/* ---------- deletePlace ---------- */
 
-export const deletePlace = asyncHandler(async (req: Request, res: Response) => {
+export const deletePlace = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { id } = req.params
+    const role = req.user?.role
+
+    if (role !== "admin") {
+        throw new ApiError(403, "Only admins can delete content permanently")
+    }
+
     const place = await Place.findByIdAndDelete(id)
 
     if (!place) {
@@ -98,14 +132,15 @@ export const deletePlace = asyncHandler(async (req: Request, res: Response) => {
     )
 })
 
-/* ---------- getStats (Admin Only) ---------- */
+/* ---------- getStats ---------- */
 
 export const getStats = asyncHandler(async (req: Request, res: Response) => {
-    const [totalPlaces, featuredPlaces, trendingPlaces, totalUsers] = await Promise.all([
+    const [totalPlaces, featuredPlaces, trendingPlaces, totalUsers, pendingReview] = await Promise.all([
         Place.countDocuments(),
         Place.countDocuments({ featured: true }),
         Place.countDocuments({ trending: true }),
-        User.countDocuments()
+        User.countDocuments(),
+        Place.countDocuments({ status: "pending_review" })
     ])
 
     res.status(200).json(
@@ -115,7 +150,8 @@ export const getStats = asyncHandler(async (req: Request, res: Response) => {
                 totalPlaces,
                 featuredPlaces,
                 trendingPlaces,
-                totalUsers
+                totalUsers,
+                pendingReview
             },
             "Stats fetched successfully"
         )

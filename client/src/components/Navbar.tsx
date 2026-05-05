@@ -1,9 +1,8 @@
 import { Link } from "react-router-dom"
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react"
 import { useAppAuth } from "../context/AuthContext"
 
 const Navbar = () => {
-  const { role } = useAppAuth()
+  const { role, isSignedIn, logout } = useAppAuth()
 
   const isAdminOrEditor = role === "admin" || role === "editor"
 
@@ -17,14 +16,18 @@ const Navbar = () => {
         <Link to="/explore" className="text-on-surface/70 hover:text-primary transition-colors">
           EXPLORE
         </Link>
-        <SignedOut>
-          <SignInButton mode="modal">
-            <button className="text-on-surface/70 hover:text-primary cursor-pointer uppercase tracking-widest">
-              Login
-            </button>
-          </SignInButton>
-        </SignedOut>
-        <SignedIn>
+        {!isSignedIn && (
+          <>
+            <Link to="/login" className="text-on-surface/70 hover:text-primary transition-colors">
+              LOGIN
+            </Link>
+            <Link to="/register" className="text-on-surface/70 hover:text-primary transition-colors">
+              REGISTER
+            </Link>
+          </>
+        )}
+        {isSignedIn && (
+          <>
           <Link to="/dashboard" className="text-on-surface/70 hover:text-primary transition-colors">
             ITINERARY
           </Link>
@@ -33,10 +36,14 @@ const Navbar = () => {
               ADMIN
             </Link>
           )}
-          <div className="pl-2">
-            <UserButton appearance={{ elements: { userButtonAvatarBox: "w-9 h-9 border-2 border-primary/20" } }} />
-          </div>
-        </SignedIn>
+          <button
+            onClick={logout}
+            className="text-on-surface/70 hover:text-primary transition-colors uppercase tracking-widest"
+          >
+            LOGOUT
+          </button>
+          </>
+        )}
       </div>
     </nav>
   )

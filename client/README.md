@@ -11,10 +11,10 @@ The UI is designed to feel like a sophisticated travel magazine:
 
 ## 🔐 Auth Integration
 
-Powered by `@clerk/clerk-react`.
-- Uses `ClerkProvider` in `main.tsx`.
-- Custom `RoleRoute` component for protecting sensitive areas.
-- Automatic token synchronization with backend via Axios interceptors.
+Powered by backend JWT authentication.
+- Uses `AuthProvider` in `main.tsx`.
+- Custom `ProtectedRoute` and `RoleRoute` components for route protection.
+- Token persistence and sync through `axiosInstance.ts`.
 
 ## 📸 Image Management
 
@@ -26,7 +26,6 @@ Utilizes `@imagekit/react` for direct-to-cloud uploads.
 
 ```env
 VITE_API_URL=http://localhost:5000
-VITE_CLERK_PUBLISHABLE_KEY=your_clerk_key
 VITE_IMAGEKIT_PUBLIC_KEY=your_imagekit_public
 VITE_IMAGEKIT_URL_ENDPOINT=your_imagekit_endpoint
 ```
