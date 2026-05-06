@@ -1,4 +1,4 @@
-import express, { Request, Response, NextFunction } from 'express';
+  import express, { Request, Response, NextFunction } from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
@@ -19,21 +19,41 @@ const app = express();
 const PORT = config.port || 5000;
 
 /* ---------- SECURITY MIDDLEWARE ---------- */
-app.use(helmet());
+app.use(helmet({
+  // Allow images from external sources (Unsplash, ImageKit, etc.)
+  contentSecurityPolicy: {
+    directives: {
+      imgSrc: ["'self'", "https:", "data:"],
+      scriptSrc: ["'self'", "'unsafe-inline'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+    },
+  },
+}));
+
 app.use(cors({
   origin: (origin, callback) => {
+    // Build allowed origins from environment and defaults
+    const corsOrigins = process.env.CORS_ORIGIN 
+      ? process.env.CORS_ORIGIN.split(',').map(o => o.trim())
+      : [];
+    
     const allowedOrigins = [
       'http://localhost:5173',
       'http://localhost:3000',
       process.env.CORS_ORIGIN || 'http://localhost:5173'
     ];
+    
+    // Allow requests with no origin (mobile apps, curl, etc)
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
+      console.warn(`CORS blocked origin: ${origin}`);
       callback(new Error('Not allowed by CORS'));
     }
   },
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
 // ✅ Add cookie parser for httpOnly cookies
@@ -47,11 +67,8 @@ const authLimiter = rateLimit({
   message: {
     success: false,
     message: "Too many login/register attempts, please try again after 15 minutes"
-  },
-  keyGenerator: (req) => {
-    // Rate limit by IP
-    return req.ip || 'unknown';
   }
+  // ✅ Uses default keyGenerator which properly handles IPv6 addresses
 });
 
 // ✅ Global rate limiter (lenient)

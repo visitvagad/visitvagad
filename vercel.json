@@ -10,7 +10,7 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "https://visitvagad.onrender.com/api/$1"
+      "destination": "https://visitvagad-server.onrender.com/api/$1"
     },
     {
       "source": "/(.*)",
