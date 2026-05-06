@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { loginApi, registerApi, getMeApi } from "../apis/auth.api";
-import { initializeAuthToken, persistAuthToken } from "../apis/axiosInstance";
+import { loginApi, registerApi, getMeApi, logoutApi } from "../apis/auth.api";
 import type { IUser } from "../types";
 
 interface AuthContextType {
@@ -11,7 +10,7 @@ interface AuthContextType {
   refreshUser: () => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
   register: (name: string, email: string, password: string) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -36,20 +35,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const userData = res?.data?.data as IUser | undefined;
       applyUserState(userData || null);
     } catch {
-      persistAuthToken(null);
+      // ✅ If /me fails, user is likely not authenticated
       applyUserState(null);
     }
   };
 
+  // ✅ Initialize auth on app load
+  // The cookie is automatically sent by axios (withCredentials: true)
   useEffect(() => {
     const boot = async () => {
-      const token = initializeAuthToken();
-      if (!token) {
-        applyUserState(null);
-        setIsLoading(false);
-        return;
-      }
-
+      // ✅ No need to check localStorage anymore - cookie handles it
       await fetchUser();
       setIsLoading(false);
     };
@@ -65,24 +60,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async (email: string, password: string) => {
     const res = await loginApi({ email, password });
-    const token = res?.data?.data?.token as string;
     const userData = res?.data?.data?.user as IUser;
-
-    persistAuthToken(token);
+    // ✅ Cookie is automatically set by the server
+    // ✅ axios sends it automatically with credentials: "include"
     applyUserState(userData);
   };
 
   const register = async (name: string, email: string, password: string) => {
     const res = await registerApi({ name, email, password });
-    const token = res?.data?.data?.token as string;
     const userData = res?.data?.data?.user as IUser;
-
-    persistAuthToken(token);
+    // ✅ Cookie is automatically set by the server
     applyUserState(userData);
   };
 
-  const logout = () => {
-    persistAuthToken(null);
+  const logout = async () => {
+    try {
+      await logoutApi();
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+    // ✅ Clear local state after server clears cookie
     applyUserState(null);
   };
 

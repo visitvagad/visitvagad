@@ -3,10 +3,13 @@ import axios from "axios"
 export const AUTH_TOKEN_KEY = "auth_token"
 
 const api = axios.create({
-    baseURL: `${import.meta.env.VITE_API_URL}/api`,
+    baseURL: import.meta.env.VITE_API_URL || '/api',
     headers: {
         "Content-Type": "application/json"
-    }
+    },
+    // ✅ CRITICAL: Send cookies with all requests
+    // This allows httpOnly cookies to be sent automatically
+    withCredentials: true
 })
 
 export const setAuthToken = (token: string | null) => {
@@ -18,6 +21,8 @@ export const setAuthToken = (token: string | null) => {
 }
 
 export const persistAuthToken = (token: string | null) => {
+    // ✅ Deprecated - token is now in httpOnly cookie managed by server
+    // localStorage is no longer used to prevent XSS vulnerabilities
     if (token) {
         localStorage.setItem(AUTH_TOKEN_KEY, token)
     } else {

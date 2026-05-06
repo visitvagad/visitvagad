@@ -1,5 +1,18 @@
-import mongoose, { Schema, Model } from "mongoose";
-import { IDay, IItinerary } from "../types";
+import mongoose, { Schema, Document } from "mongoose";
+import { IDay } from "../types";
+
+export interface IItineraryDocument extends Document {
+    user: mongoose.Types.ObjectId
+    title: string
+    duration: number
+    days: IDay[]
+    isPublic: boolean
+    status?: "draft" | "pending_review" | "published"
+    createdBy?: string
+    updatedBy?: string
+    createdAt: Date
+    updatedAt: Date
+}
 /* ---------------- Day Schema ---------------- */
 
 const daySchema = new Schema({
@@ -52,4 +65,4 @@ const itinerarySchema = new Schema(
     { timestamps: true }
 );
 
-export const Itinerary = mongoose.model("Itinerary", itinerarySchema);
+export const Itinerary = mongoose.model<IItineraryDocument>("Itinerary", itinerarySchema);

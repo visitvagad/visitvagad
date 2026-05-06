@@ -19,15 +19,21 @@ declare global {
     }
 }
 
-
-
 /* ---------- AUTHENTICATION MIDDLEWARE ---------- */
 
 export const protect = asyncHandler(
     async (req: Request, _: Response, next: NextFunction) => {
 
+        // ✅ Try to get token from cookie first (httpOnly cookies)
+        const tokenFromCookie = (req.cookies as any)?.auth_token
+        
+        // ✅ Fall back to Authorization header for API clients
         const authHeader = req.headers.authorization
-        const token = authHeader?.startsWith("Bearer ") ? authHeader.split(" ")[1] : null
+        const tokenFromHeader = authHeader?.startsWith("Bearer ") 
+            ? authHeader.split(" ")[1] 
+            : null
+
+        const token = tokenFromCookie || tokenFromHeader
 
         if (!token) {
             throw new ApiError(401, "Authorization token required")

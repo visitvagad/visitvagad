@@ -5,6 +5,9 @@ export interface IFood extends Document {
   category: string;
   description: string;
   image: string;
+  status?: "draft" | "pending_review" | "published";
+  createdBy?: string;
+  updatedBy?: string;
 }
 
 const foodSchema: Schema = new Schema({

@@ -9,6 +9,9 @@ export interface IHotel extends Document {
   bookingLink?: string;
   verified: boolean;
   image: string;
+  status?: "draft" | "pending_review" | "published";
+  createdBy?: string;
+  updatedBy?: string;
 }
 
 const hotelSchema: Schema = new Schema({

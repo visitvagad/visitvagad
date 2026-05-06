@@ -8,6 +8,9 @@ export interface IEvent extends Document {
   culturalSignificance: string;
   image: string;
   recurring: boolean;
+  status?: "draft" | "pending_review" | "published";
+  createdBy?: string;
+  updatedBy?: string;
 }
 
 const eventSchema: Schema = new Schema({

@@ -1,6 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import { rateLimit } from 'express-rate-limit';
 import { config } from './config/config';
 import connectDB from './db/connectDatabase';
@@ -20,22 +21,54 @@ const PORT = config.port || 5000;
 /* ---------- SECURITY MIDDLEWARE ---------- */
 app.use(helmet());
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || "http://localhost:5173",
+  origin: (origin, callback) => {
+    const allowedOrigins = [
+      'http://localhost:5173',
+      'http://localhost:3000',
+      process.env.CORS_ORIGIN || 'http://localhost:5173'
+    ];
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
 
-const limiter = rateLimit({
+// ✅ Add cookie parser for httpOnly cookies
+app.use(cookieParser());
+
+// ✅ Auth rate limiter (strict)
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  limit: 5, // Only 5 login attempts
+  skipSuccessfulRequests: true, // Don't count successful logins
+  message: {
+    success: false,
+    message: "Too many login/register attempts, please try again after 15 minutes"
+  },
+  keyGenerator: (req) => {
+    // Rate limit by IP
+    return req.ip || 'unknown';
+  }
+});
+
+// ✅ Global rate limiter (lenient)
+const globalLimiter = rateLimit({
 	windowMs: 15 * 60 * 1000, // 15 minutes
-	limit: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
-	standardHeaders: 'draft-7', // set `RateLimit` and `RateLimit-Policy` headers
-	legacyHeaders: false, // disable the `X-RateLimit-*` headers
+	limit: 100, // 100 requests per 15 minutes
+	standardHeaders: 'draft-7',
+	legacyHeaders: false,
   message: {
     success: false,
     message: "Too many requests from this IP, please try again after 15 minutes"
   }
 });
 
-app.use("/api", limiter);
+app.use("/api/auth/login", authLimiter);
+app.use("/api/auth/register", authLimiter);
+app.use("/api", globalLimiter);
 
 /* ---------- PARSING MIDDLEWARE ---------- */
 app.use(express.json({ limit: '10mb' }));

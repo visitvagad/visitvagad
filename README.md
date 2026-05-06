@@ -17,6 +17,20 @@ VisitVagad is a premium tourism web application dedicated to showcasing the sun-
 - **Backend:** Node.js, Express, MongoDB (Mongoose), JWT.
 - **Images:** ImageKit.io.
 
+## 🔒 Security
+
+VisitVagad implements production-grade security with:
+
+- **Secure Session Management**: httpOnly, secure, sameSite cookies (no localStorage)
+- **Centralized RBAC**: Single-source-of-truth permission matrix with 13 granular permissions
+- **Content Ownership**: All edits validated against content creator
+- **Audit Logging**: Complete forensic trail with IP/user-agent capture
+- **Rate Limiting**: 5 req/15min for auth, 100 req/15min for API
+- **Access Control**: Status-based content visibility (draft/pending/published)
+- **Input Validation**: Zod schemas for all request bodies
+
+**Status**: ✅ **SAFE FOR PRODUCTION** - [Full Report](./SECURITY_RE_AUDIT_REPORT.md)
+
 ## 🚀 Quick Start
 
 ### 1. Prerequisites

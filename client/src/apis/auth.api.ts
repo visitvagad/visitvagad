@@ -8,6 +8,11 @@ export const loginApi = (payload: { email: string; password: string }) => {
     return api.post("/auth/login", payload)
 }
 
+// ✅ Add logout API call
+export const logoutApi = () => {
+    return api.post("/auth/logout")
+}
+
 /* ---------- GET CURRENT USER ---------- */
 
 export const getMeApi = () => {
