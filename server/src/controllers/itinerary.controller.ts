@@ -119,7 +119,7 @@ export const updateItinerary = asyncHandler(async (req: AuthRequest, res: Respon
         updateData.status = "pending_review"
     }
 
-    const itinerary = await Itinerary.findByIdAndUpdate(id, updateData, { new: true })
+    const itinerary = await Itinerary.findByIdAndUpdate(id, updateData, { new: true, runValidators: true })
     if (!itinerary) throw new ApiError(404, "Itinerary not found")
 
     // ✅ Audit log

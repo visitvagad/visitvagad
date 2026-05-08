@@ -28,7 +28,7 @@ const setAuthCookie = (res: Response, token: string, userId: string) => {
   res.cookie("auth_token", token, {
     httpOnly: true,           // ✅ XSS protection: not accessible to JavaScript
     secure: isProduction,     // ✅ HTTPS only in production
-    sameSite: "strict",       // ✅ CSRF protection
+    sameSite: "lax",          // ✅ Better compatibility for cross-port localhost
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
     path: "/",
     domain: isProduction ? undefined : undefined, // Only set domain in production
@@ -240,7 +240,7 @@ export const logout = asyncHandler(async (req: AuthRequest, res: Response) => {
   res.clearCookie("auth_token", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    sameSite: "lax",
     path: "/",
   })
 
@@ -299,7 +299,7 @@ export const updateUserRole = asyncHandler(async (req: AuthRequest, res: Respons
     throw new ApiError(400, "Invalid role")
   }
 
-  const user = await User.findByIdAndUpdate(id, { role }, { new: true }).select("-password")
+  const user = await User.findByIdAndUpdate(id, { role }, { new: true, runValidators: true }).select("-password")
 
   if (!user) {
     throw new ApiError(404, "User not found")
@@ -317,7 +317,7 @@ export const updateUserRole = asyncHandler(async (req: AuthRequest, res: Respons
 export const deleteUser = asyncHandler(async (req: AuthRequest, res: Response) => {
   const { id } = req.params
 
-  const user = await User.findByIdAndUpdate(id, { isActive: false }, { new: true }).select("-password")
+  const user = await User.findByIdAndUpdate(id, { isActive: false }, { new: true, runValidators: true }).select("-password")
 
   if (!user) {
     throw new ApiError(404, "User not found")

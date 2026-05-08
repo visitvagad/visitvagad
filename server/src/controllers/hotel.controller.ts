@@ -119,7 +119,7 @@ export const updateHotel = asyncHandler(async (req: AuthRequest, res: Response) 
         updateData.status = "pending_review"
     }
 
-    const hotel = await Hotel.findByIdAndUpdate(id, updateData, { new: true })
+    const hotel = await Hotel.findByIdAndUpdate(id, updateData, { new: true, runValidators: true })
     if (!hotel) throw new ApiError(404, "Hotel not found")
 
     // ✅ Audit log

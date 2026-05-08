@@ -4,9 +4,11 @@ import { IDay } from "../types";
 export interface IItineraryDocument extends Document {
     user: mongoose.Types.ObjectId
     title: string
+    description?: string
+    coverImage?: string
     duration: number
     days: IDay[]
-    isPublic: boolean
+    featured: boolean
     status?: "draft" | "pending_review" | "published"
     createdBy?: string
     updatedBy?: string
@@ -21,11 +23,17 @@ const daySchema = new Schema({
         required: true
     },
 
-    places: [
+    activities: [
+        {
+            type: String,
+            required: true
+        }
+    ],
+
+    destinations: [
         {
             type: Schema.Types.ObjectId,
-            ref: "Place",
-            required: true
+            ref: "Place"
         }
     ],
 
@@ -50,6 +58,14 @@ const itinerarySchema = new Schema(
             required: true
         },
 
+        description: {
+            type: String
+        },
+
+        coverImage: {
+            type: String
+        },
+
         duration: {
             type: Number,
             required: true
@@ -57,9 +73,23 @@ const itinerarySchema = new Schema(
 
         days: [daySchema],
 
-        isPublic: {
+        featured: {
             type: Boolean,
             default: false
+        },
+
+        status: {
+            type: String,
+            enum: ["draft", "pending_review", "published"],
+            default: "draft"
+        },
+
+        createdBy: {
+            type: String
+        },
+
+        updatedBy: {
+            type: String
         }
     },
     { timestamps: true }

@@ -48,9 +48,7 @@ export const PERMISSION_MATRIX: Record<Role, Permission[]> = {
     'submit_review',
     'upload_media',
   ],
-  user: [
-    'view_analytics',
-  ],
+  user: [],
 };
 
 /**

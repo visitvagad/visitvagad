@@ -119,7 +119,7 @@ export const updateFood = asyncHandler(async (req: AuthRequest, res: Response) =
         updateData.status = "pending_review"
     }
 
-    const food = await Food.findByIdAndUpdate(id, updateData, { new: true })
+    const food = await Food.findByIdAndUpdate(id, updateData, { new: true, runValidators: true })
     if (!food) throw new ApiError(404, "Food not found")
 
     // ✅ Audit log

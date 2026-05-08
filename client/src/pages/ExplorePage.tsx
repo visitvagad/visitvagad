@@ -13,7 +13,7 @@ const ExplorePage = () => {
   const fetchPlaces = async (pageNum: number = 1) => {
     setIsLoading(true)
     try {
-      const res = await getAllPlacesApi(filter.district, filter.category, undefined, undefined)
+      const res = await getAllPlacesApi(filter.district, filter.category, undefined, undefined, pageNum)
       const data = res?.data?.data
       setPlaces(data?.places || [])
       setPagination({

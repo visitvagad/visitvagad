@@ -12,30 +12,8 @@ const api = axios.create({
     withCredentials: true
 })
 
-export const setAuthToken = (token: string | null) => {
-    if (token) {
-        api.defaults.headers.common["Authorization"] = `Bearer ${token}`
-    } else {
-        delete api.defaults.headers.common["Authorization"]
-    }
-}
-
-export const persistAuthToken = (token: string | null) => {
-    // ✅ Deprecated - token is now in httpOnly cookie managed by server
-    // localStorage is no longer used to prevent XSS vulnerabilities
-    if (token) {
-        localStorage.setItem(AUTH_TOKEN_KEY, token)
-    } else {
-        localStorage.removeItem(AUTH_TOKEN_KEY)
-    }
-    setAuthToken(token)
-}
-
-export const initializeAuthToken = () => {
-    const token = localStorage.getItem(AUTH_TOKEN_KEY)
-    setAuthToken(token)
-    return token
-}
+// ✅ Legacy localStorage logic removed - auth is now handled by httpOnly cookies
+// This prevents XSS vulnerabilities and ensures consistency on refresh
 
 /* ---------- RESPONSE INTERCEPTOR ---------- */
 
@@ -45,7 +23,8 @@ api.interceptors.response.use(
     },
     (error) => {
         if (error.response && error.response.status === 401) {
-            persistAuthToken(null)
+            // ✅ Handle 401: The server has already cleared the cookie if necessary
+            // or the cookie was missing. AuthContext will handle the state update.
         }
         return Promise.reject(error)
     }

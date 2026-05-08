@@ -2,13 +2,15 @@ import api from "./axiosInstance"
 
 /* ---------- GET ALL PLACES ---------- */
 
-export const getAllPlacesApi = (district?: string, category?: string, featured?: boolean, trending?: boolean) => {
+export const getAllPlacesApi = (district?: string, category?: string, featured?: boolean, trending?: boolean, page?: number, limit?: number) => {
     return api.get("/places", {
         params: {
             district,
             category,
             featured,
-            trending
+            trending,
+            page,
+            limit
         }
     })
 }

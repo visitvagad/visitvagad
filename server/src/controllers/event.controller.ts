@@ -119,7 +119,7 @@ export const updateEvent = asyncHandler(async (req: AuthRequest, res: Response) 
         updateData.status = "pending_review"
     }
 
-    const event = await Event.findByIdAndUpdate(id, updateData, { new: true })
+    const event = await Event.findByIdAndUpdate(id, updateData, { new: true, runValidators: true })
     if (!event) throw new ApiError(404, "Event not found")
 
     // ✅ Audit log

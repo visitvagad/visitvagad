@@ -52,12 +52,14 @@ export const foodSchema = z.object({
 });
 
 export const itinerarySchema = z.object({
-  title: z.string().min(5, "Title is required"),
-  description: z.string().optional(),
+  title: z.string().min(5, "Title must be at least 5 characters"),
+  description: z.string().min(10, "Description must be at least 10 characters"),
+  coverImage: z.string().url("A valid cover image URL is required"),
+  duration: z.number().min(1, "Duration must be at least 1 day"),
   days: z.array(z.object({
     dayNumber: z.number(),
-    activities: z.array(z.string()),
-    destinations: z.array(z.string()), // IDs of destinations
+    activities: z.array(z.string()).min(1, "At least one activity is required per day"),
+    destinations: z.array(z.string()).optional(), // IDs of destinations
   })).min(1, "At least one day is required"),
   featured: z.boolean().default(false),
   status: statusSchema,
