@@ -36,6 +36,7 @@ const auditLogSchema = new Schema<IAuditLog>(
       required: true,
       enum: [
         'LOGIN',
+        'REGISTER',
         'LOGOUT',
         'CREATE_CONTENT',
         'UPDATE_CONTENT',

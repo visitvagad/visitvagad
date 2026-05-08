@@ -47,7 +47,7 @@ export const register = asyncHandler(async (req: AuthRequest, res: Response) => 
     // ✅ Log failed registration attempt
     await logAudit(
       "unknown",
-      "LOGIN",
+      "REGISTER",
       "User",
       undefined,
       normalizedEmail,
@@ -79,7 +79,7 @@ export const register = asyncHandler(async (req: AuthRequest, res: Response) => 
   // ✅ Log successful registration
   await logAudit(
     userId,
-    "LOGIN",
+    "REGISTER",
     "User",
     userId,
     normalizedEmail,
