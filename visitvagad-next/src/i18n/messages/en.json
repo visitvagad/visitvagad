@@ -1,0 +1,14 @@
+{
+  "common": {
+    "siteName": "VisitVagad",
+    "tagline": "Discover Rajasthan's Vagad Region"
+  },
+  "nav": {
+    "destinations": "Destinations",
+    "culture": "Culture",
+    "food": "Food",
+    "events": "Events",
+    "stays": "Stays",
+    "planYourTrip": "Plan Your Trip"
+  }
+}
